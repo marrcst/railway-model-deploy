@@ -40,11 +40,13 @@ There are 4 main topics to cover here:
 ### 1.1 Before you continue
 
 Topic #1 is the only one that is not covered here in this README. It is covered in two learning notebooks
-that you should read before moving on with the rest of this README.
+that you should read before moving on with the rest of this README. Clone this repository to get the notebooks. If you don't remember how, refer to [section 3 of the student repo readme](https://github.com/LDSSA/batch-students/blob/main/guides/github.md).
 
 Learning notebook 1 has to do with training and serializing a scikit model as well as how to prepare a new observation that arrives for prediction.
 
 Learning notebook 2 explains how to deserialize the saved model so that you can use a trained model with new observations without having to re-train it.
+
+Create a virtual environment for the notebooks as described in the next section.
 
 ### 1.2 Python virtual environment
 
@@ -55,6 +57,8 @@ The `requirements_dev.txt` file has the packages that are needed while preparing
 The `requirements_prod.txt` file has the packages that are needed when we deploy our model. At that point, we won't need jupyter or matplotlib, so we can save some resources by not installing them.
 
 Now go ahead and create a Python virtual env using the requirements in `requirements_dev.txt` in order to follow this tutorial.
+
+You can now study both learning notebooks. Continue with the next section after you have studied them.
 
 ## 2. Flask
 
