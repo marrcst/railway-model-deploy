@@ -8,3 +8,6 @@ peewee==4.0.0             # S06
 psycopg2-binary==2.9.11   # S06
 
 
+Flask==3.1.2              # S06
+peewee==3.18.2            # S06
+psycopg2-binary==2.9.10   # S06
