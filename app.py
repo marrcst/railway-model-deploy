@@ -1,5 +1,3 @@
-#ldssa-railway-majkah0-production.up.railway.app
-
 import os
 import json
 import pickle
@@ -113,3 +111,4 @@ def list_db_contents():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)
+
