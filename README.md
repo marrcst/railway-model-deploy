@@ -18,9 +18,7 @@ You can deploy your own model by
    your own
 1. Deploy to railway
 
-You'll probably run into a few issues along the way which is why you'll at least want to
-skim the contents of the notebooks and this README, in order to have an idea of
-where to look when you hit a bump in the road.
+Read on to learn the details of how to do all this.
 
 ## 1. Intro
 
@@ -73,24 +71,24 @@ However, be wary before moving forward with a big project using flask - it can g
 without the enforced structure that other heavier frameworks like Django provide.
 
 For us, since we only need a total of two endpoints (an endpoint is the URL that is used to request an action from the server; in our case we will need two types of actions: requesting a prediction for an observation, and updating an observation's true class) and it doesn't even need to be [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer), we can stick with
-flask and be reasonably justified in it.
+flask and feel reasonably justified about it.
 
 ### 2.2 Create an HTTP server
 
 In order to use flask, you will need to write code in a regular
-Python file - no more notebooks here.
+Python file - no more notebooks here. So open your favourite Python editor and prepare for writing.
 
-The first step (assuming you have already created a virtual environment and installed the requirements in `requirements_dev.txt`), is to import flask at the top of the file and create the HTTP server. Let's pretend that we are working in a file called `app.py` in our newly created virtual environment.
-
-We're doing three imports. The [Flask](https://flask.palletsprojects.com/en/stable/api/#application-object) object is for creating an HTTP server. The [request](https://flask.palletsprojects.com/en/stable/api/#flask.request) object does exactly what the name suggests: holds all of the contents of an HTTP request that someone is making. The [jsonify](https://flask.palletsprojects.com/en/stable/api/#flask.json.jsonify) function converts objects such as dictionaries to json.
-
-Next we use the Flask constructor to create a new application. We will add routes to it later.
+Let's conveniently call our file `app.py`. The first step is to import flask at the top of the file and create the HTTP server.
 
 ```py
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 ```
+
+We're doing three imports. The [Flask](https://flask.palletsprojects.com/en/stable/api/#application-object) object is for creating an HTTP server. The [request](https://flask.palletsprojects.com/en/stable/api/#flask.request) object does exactly what the name suggests: holds all of the contents of an HTTP request that someone is making. The [jsonify](https://flask.palletsprojects.com/en/stable/api/#flask.json.jsonify) function converts objects such as dictionaries to json.
+
+Next we use the Flask constructor to create a new application. We will add routes to it later.
 
 This server doesn't do anything yet. In order to make it do stuff we will
 need to add HTTP endpoints.
@@ -116,7 +114,7 @@ that you sent it. But hey, with just a few lines of code we've almost created an
 ### 2.4 Make a complete server
 
 Putting it all together with a few lines of code at the end (in order to start
-the server in development mode), we've created an entire server.
+the server in development mode), we've created an entire server:
 
 ```py
 from flask import Flask, request, jsonify
@@ -135,9 +133,11 @@ if __name__ == "__main__":
 
 ```
 
-Create a new file called `first_app.py` and save the above code. To run the server, open a terminal window and create a new virtual environment for production with the `requirements_prod.txt` file. Then run the server by executing `python3.12 first_app.py`. Your server will now be running locally.
+Save your `app.py` file and you are ready to run the server. To run the server, open a terminal window and create a new virtual environment for production with the `requirements_prod.txt` file. Activate the venv, then run the server by executing `python3.12 app.py`. Your server will now be running locally. If everything worked, you should something like this in your terminal:
 
-Now you can send requests to your server and get predictions. Open a new terminal window and execute the following command in order to get a prediction:
+<img src="media/first_app_running.png">
+
+Now you can now send requests to your server and get predictions. Open a new terminal window and execute the following command in order to get a prediction (no need to activate a virtual environment here):
 
 ```bash
 curl -X POST http://localhost:5000/predict
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     app.run(debug=True)
 ```
 
-Check out how we have now taken the payload and turned it into
+Check out how we have taken the payload and turned it into
 a new observation that is a single entry in a dataframe,
 and can be consumed by the pipeline to be turned into a prediction
 of survival. Copy the code into your app file and test it with the following:
@@ -270,7 +270,7 @@ You should get:
 
 Okay, now that you can get data, produce predictions, and return those predictions,
 you will need to keep track of what you've been saying about who.
-Said another way: you can't just provide predictions and then just forget about it all. You need to
+Said another way: you can't just provide predictions and then forget about it all. You need to
 take record of what you have predicted about which input, so that later on you can do some additional analysis on your "through the door" population.
 
 In order to do this, we will need to start working with a database. The database
@@ -464,7 +464,7 @@ One piece of the code above that might not be clear at first is:
 ```
 
 What is this code doing? When we receive a new prediction request, we want to store such request
-in our database (to keep track of our model performance). With peewee, we save a new Prediction (basically
+in our database (to keep track of our model performance). With peewee, we save a new `Prediction` object (basically
 a new row in our table) with the `save()` method, which is very neat and convenient.
 
 However, because our table has a uniqueness constraint (no two rows can have the same `observation_id`),
@@ -492,7 +492,7 @@ Now let's take note of the few things that changed:
 1. The structure of the json input changed. It now includes two top level entries:
     - `id` - This is the unique identifier of the observation;
     - `observation` - This is the actual observation contents that will be sent to
-      the pipeline we have un-pickled.
+      the pipeline we have unpickled.
 1. We create an instance of `Prediction` with the 3 fields that we care about.
 1. We call `save()` on the prediction to save it to the database.
 1. We return `proba` so that the caller of the HTTP endpoint knows what the model
@@ -523,8 +523,7 @@ def update():
 
 Assuming that we have already processed an observation with id=0, we
 can now receive and record the true outcome. Imagine that it is discovered
-later on that the person with id=0 didn't survive the Titanic disaster. They
-would probably enter something into a content management system that
+later on that the person with id=0 didn't survive the Titanic disaster. This information would be entered into a content management system that
 would then trigger a call to your server which would end up looking like
 the following:
 
@@ -548,8 +547,7 @@ Similarly to when we saved the prediction requests, we validate that the `observ
 Now to wrap it all up, the way that we can interpret this sequence of events is the following:
 
 1. We provided a prediction of 0.161 probability of survival;
-1. We found out later that the person didn't survive.
-
+1. We found out later that the person didn't survive and updated our data with this information.
 
 ## 6. Deploy to railway
 
@@ -560,15 +558,16 @@ do much good in terms of making the model available to the rest of the world. Al
 So let's take all of the work we've done getting this running and put it on a cloud where it can generate real business value. For this part, you can use any server
 that has a static IP address though since we want to avoid the overhead of administering
 our own server, we will use a service to do this for us called [railway](https://railway.app/).
-Railway includes a free-tier that should be enough for our needs throughout this specialization and the whole capstone project, but **only if you remember to turn off your applications once you're done with them**. You have a **$5.00** of credit and **it's your responsibility to manage this**. Be careful before you move forward with a big project on railway -
-it can get CRAZY expensive REALLY fast.
+Railway includes a free plan that should be enough for our needs throughout this specialization and the whole capstone project, but **only if you remember to turn off your applications once you're done with them**. Currently the free plan includes a 30-day trial $5.00 of credit and after that you get a $1 credit every month. It doesn't sound like a lot, but it's enough for small projects. Be careful before you move forward with a big project on railway - it can get CRAZY expensive REALLY fast.
 
 ### 6.1 Set up your repo
 Railway will deploy your code from a GitHub repo, so first you need to make a copy of this repository and make sure that your app code is in the `app.py` file.
 
+A very important file in the repository is the Dockerfile. This file defines the [docker](https://docs.docker.com/), a containerized environment for your deployment where your application will run. The first line specifies the Python version. Then we define the working directory. The last two lines install the requirements inside the docker and run your app. It is important that the app filename in the docker matches your app filename.
+
 ### 6.2 Sign up and set up at railway
 
-Go to the [railway main page](https://railway.app/) and start a new project deployed from a github repo. Alternatively you can use the login button.
+Go to the [railway main page](https://railway.app/) and start a new project deployed from a github repo. Alternatively you can use the login button. Note that the screenshots are from a couple of years ago, so the visuals can be slightly different now.
 
 ![main page](media/main_page.png)
 ![gh deploy](media/gh_deploy.png)
@@ -591,7 +590,7 @@ Once this is done, you'll be taken to the main dashboard where you'll see your a
 
 ![success build](media/build_successful.png)
 
-Go to "Settings" and scroll down to "Generate Domain". Click on the "Generate domain" button. **This will generate a url for your app, and we can use it to make requests to your app.**
+Go to "Settings" and scroll down to "Generate Domain". Click on the "Generate domain" button. **This will generate a url for your app, and we can use it to make requests to your app.** Choose 5000 for the port.
 
 ![generate domain](media/generate_domain.png)
 ![generate domain example](media/generate_domain_2.png)
