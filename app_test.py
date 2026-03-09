@@ -87,11 +87,12 @@ def update():
         return jsonify(model_to_dict(p))
 
     except Prediction.DoesNotExist:
-        error_msg = f'Observation ID {obs_dict['id']} does not exist'
+        error_msg = f"Observation ID {obs_dict['id']} does not exist"
         return jsonify({'error': error_msg})
 
 
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 if __name__ == "__main__":
-    app.run(debug=True)
-
-
+    app.run(host='0.0.0.0', debug=True, port=5000)
