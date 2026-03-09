@@ -5,4 +5,4 @@ WORKDIR /opt/ml_in_app
 
 # install packages by conda
 RUN pip install -r requirements_prod.txt
-CMD ["python", "app.py"]
+CMD ["python", "app_test.py"]
