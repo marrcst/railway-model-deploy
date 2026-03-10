@@ -54,6 +54,8 @@ def predict():
     except Exception:
         #If any of the columns has an incorrect type, an error is raised
         return jsonify({"error": "Observation is invalid!"})
+    # except Exception as e:
+    #     return jsonify({"error": str(e)})
 
     proba = pipeline.predict_proba(obs)[0, 1]
     response = {'proba': proba}
@@ -91,8 +93,8 @@ def update():
         return jsonify({'error': error_msg})
 
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    app.run(debug=True)
+
+# if __name__ == "__main__":
+#     app.run(host='0.0.0.0', debug=True, port=5000)
